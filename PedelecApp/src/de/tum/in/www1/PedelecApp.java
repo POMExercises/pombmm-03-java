@@ -54,24 +54,30 @@ public class PedelecApp extends Application {
 		
 		reserveButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				   System.out.println("Reserve Button clicked");
-				   LocalDate XX1 = datePicker.getValue();
-				String x_1 = timeTextField.getText(), x_2 = x_1, x_3;
-				         x_2 = pedelecNametext.getText();
-				            String x_4 = x_2;
-				   x_3 = "Please confirm your reservation of " + x_2 + " at " +
-				XX1.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + timeTextField.getText();
-ButtonType x__4 = new Alert(AlertType.CONFIRMATION, "" + x_3).showAndWait().get();
-				               if (x__4 == ButtonType.OK) {
-				                  Reservation r33 = new Reservation(), r34;
-				                           r33.setBike(x_4);
-				                     r33.setStartDate(XX1);
-		r33.setStartTime(timeTextField.getText().concat(""));
-				     r34 = r33;
-				
-				     r34.save();
-				System.out.println("Reservation confirmed");
-			 } }
+				System.out.println("Reserve Button clicked");
+				   
+				final LocalDate startDate = datePicker.getValue();
+				if (startDate != null) {
+					final String time = timeTextField.getText();
+				    final String bikeName = pedelecNametext.getText();
+				    final String startDateString = startDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+				    final String message = "Please confirm your reservation of " + bikeName + " at " +
+				    		startDateString + " " + time;
+				    final Alert alert = new Alert(AlertType.CONFIRMATION, message);
+				    ButtonType result = alert.showAndWait().get();
+				    
+				if (result == ButtonType.OK) {
+					Reservation reservation = new Reservation();
+				     reservation.setBike(bikeName);
+                     reservation.setStartDate(startDate);
+                     reservation.setStartTime(timeTextField.getText().concat(""));
+                     reservation.save();
+				}
+				else{
+					System.out.println("Reservation confirmed");
+				}	
+			 } 
+		}
 		});
     }
 
