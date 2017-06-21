@@ -1,12 +1,18 @@
 package de.tum.in.www1;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import de.tum.in.www1.model.Reservation;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -47,15 +53,31 @@ public class PedelecApp extends Application {
         primaryStage.show();
 		
 		reserveButton.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
-		        System.out.println("Reserve Button clicked");
-		        
-		        Reservation reservation = new Reservation();
-		        reservation.setBike(pedelecNametext.getText());
-		        reservation.setStartDate(datePicker.getValue());
-		        reservation.setStartTime(timeTextField.getText());
-		        reservation.save();
-		    }
+			@Override public void handle(ActionEvent e) {
+				System.out.println("Reserve Button clicked");
+				   
+				final LocalDate startDate = datePicker.getValue();
+				if (startDate != null) {
+					final String time = timeTextField.getText();
+				    final String bikeName = pedelecNametext.getText();
+				    final String startDateString = startDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+				    final String message = "Please confirm your reservation of " + bikeName + " at " +
+				    		startDateString + " " + time;
+				    final Alert alert = new Alert(AlertType.CONFIRMATION, message);
+				    ButtonType result = alert.showAndWait().get();
+				    
+				if (result == ButtonType.OK) {
+					Reservation reservation = new Reservation();
+				     reservation.setBike(bikeName);
+                     reservation.setStartDate(startDate);
+                     reservation.setStartTime(timeTextField.getText().concat(""));
+                     reservation.save();
+				}
+				else{
+					System.out.println("Reservation confirmed");
+				}	
+			 } 
+		}
 		});
     }
 
